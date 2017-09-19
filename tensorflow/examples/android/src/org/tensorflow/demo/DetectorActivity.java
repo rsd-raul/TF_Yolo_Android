@@ -29,12 +29,16 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Display;
 import android.widget.Toast;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,8 +69,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       "file:///android_asset/multibox_location_priors.txt";
 
   private static final int TF_OD_API_INPUT_SIZE = 300;
-  private static final String TF_OD_API_MODEL_FILE =
-      "file:///android_asset/ssd_mobilenet_v1_android_export.pb";
+  private static final String TF_OD_API_MODEL_FILE = "file:///android_asset/ssd_mobilenet_v1_android_export.pb";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco_labels_list.txt";
 
   // Configuration values for tiny-yolo-voc. Note that the graph is not included with TensorFlow and
@@ -74,7 +77,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   // Graphs and models downloaded from http://pjreddie.com/darknet/yolo/ may be converted e.g. via
   // DarkFlow (https://github.com/thtrieu/darkflow). Sample command:
   // ./flow --model cfg/tiny-yolo-voc.cfg --load bin/tiny-yolo-voc.weights --savepb --verbalise
-  private static final String YOLO_MODEL_FILE = "file:///android_asset/graph-tiny-yolo-voc.pb";
+  private static final String YOLO_MODEL_FILE = Environment.getExternalStorageDirectory()
+          + "/Download/yolo-gtsdb_3classes_own_priors.pb";
   private static final int YOLO_INPUT_SIZE = 416;
   private static final String YOLO_INPUT_NAME = "input";
   private static final String YOLO_OUTPUT_NAMES = "output";
@@ -86,7 +90,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private enum DetectorMode {
     TF_OD_API, MULTIBOX, YOLO;
   }
-  private static final DetectorMode MODE = DetectorMode.TF_OD_API;
+  private static final DetectorMode MODE = DetectorMode.YOLO;
 
   // Minimum detection confidence to track a detection.
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
@@ -139,6 +143,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     tracker = new MultiBoxTracker(this);
 
     int cropSize = TF_OD_API_INPUT_SIZE;
+//      Log.e("AAAAAAAAAAAAAAAAAA", "onPreviewSizeChosen: "+ YOLO_MODEL_FILE);
+//      File dir = Environment.getExternalStorageDirectory();
+//      File aa = new File(dir, "/Download/yolo-gtsdb_3classes_own_priors.pb");
+//      Log.e("AAAAAAAAAAAAAAAAAA", "onPreviewSizeChosen: " + aa.getAbsolutePath());
+//      Log.e("AAAAAAAAAAAAAAAAAA", "onPreviewSizeChosen: " + aa.isFile());
     if (MODE == DetectorMode.YOLO) {
       detector =
           TensorFlowYoloDetector.create(

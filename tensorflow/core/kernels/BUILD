@@ -4384,6 +4384,7 @@ filegroup(
         "unpack_op.cc",
         "variable_ops.cc",
         "variable_ops.h",
+        "extract_image_patches_op.cc",
     ],
 )
 

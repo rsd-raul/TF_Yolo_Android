@@ -297,8 +297,7 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
           continue;
         }
 
-        useCamera2API = isHardwareLevelSupported(characteristics,
-            CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+        useCamera2API = true;
         LOGGER.i("Camera API lv2?: %s", useCamera2API);
         return cameraId;
       }
